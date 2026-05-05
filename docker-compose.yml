@@ -31,14 +31,24 @@ services:
       - 3100:3100
     command: -config.file=/etc/loki/local-config.yaml
 
+#  promtail:
+#    image:  grafana/promtail
+#    volumes:
+#      - ./loki-config/promtail.yaml:/etc/promtail/webapp-config.yaml
+#      - log-data:/var/log/webapp
+#    command: -config.file=/etc/promtail/webapp-config.yaml
+#    depends_on:
+#      - loki
+  
   promtail:
-    image:  grafana/promtail
-    volumes:
-      - ./loki-config/promtail.yaml:/etc/promtail/webapp-config.yaml
-      - log-data:/var/log/webapp
-    command: -config.file=/etc/promtail/webapp-config.yaml
-    depends_on:
-      - loki
+  image: grafana/promtail
+  volumes:
+    - ./loki-config/promtail.yaml:/etc/promtail/webapp-config.yaml
+    - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    - /var/run/docker.sock:/var/run/docker.sock
+  command: -config.file=/etc/promtail/webapp-config.yaml
+  depends_on:
+    - loki
 
 volumes:
   log-data:
