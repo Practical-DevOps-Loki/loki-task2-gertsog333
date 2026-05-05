@@ -8,6 +8,8 @@ services:
       logging_jobname: "webapp_logs"
     ports:
       - 8080:3000
+    volumes:
+      - log-data:/app/log/
     environment:
       - PORT=3000
       - LOG_PATH=/app/log/app.log
@@ -30,11 +32,10 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
 
   promtail:
-    image: grafana/promtail
+    image:  grafana/promtail
     volumes:
       - ./loki-config/promtail.yaml:/etc/promtail/webapp-config.yaml
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
+      - log-data:/var/log/webapp
     command: -config.file=/etc/promtail/webapp-config.yaml
     depends_on:
       - loki
